@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+   <%- include('links')%>
+   <link rel="stylesheet" href="/stylesheets/misChats.css">
+    <title>Mis chats</title>
+    <%- include('socket_misChats')%>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <%- include('./header_sin_socket'); %>
+    <div class="container-fluid">
+        <%if(datos.length===0){%>
+            <div class="row" id="noChats">
+                <div class="col-12 mx-auto text-center">
+                    <h2>Todavia no tienes ningun chat</h2>
+                </div>
+            </div>
+        <%}%>
+        <div id="conversaciones">
+            <% for(var i=0; i < datos.length; i++) { %>
+                <div class="row mt-3">
+                    <div class="col-12 col-lg-8 mx-auto">
+                        <div class="card border-dark link" data-id="<%= datos[i].id%>">
+                            <div class="row">
+                                <div class="col-2"> 
+                                    <% if(datos[i].foto!==null) { %>
+                                        <img class="img-fluid w-100" src="data:image/png; base64, <%= ((new Buffer(datos[i].foto)).toString('base64')) %>">
+                                    <%} else {%>
+                                        <img class="img-fluid w-100" src="/images/noUsuario.png">
+                                    <% } %>
+                                </div>
+                                <div class="col-10 mb-1 mx-auto">
+                                    
+                                    <h2 class="card-title"><%= datos[i].nombre %></h2>
+            
+                                    <div class="card-body">
+                                        <p class="text-muted" id="datosMensaje<%= datos[i].id%>" data-nombre="<%= datos[i].nombre %>">
+                                            <span class="text-dark"> 
+                                                <% if(datos[i].id_usuario_ultimo_mensaje=== session.id_user) { %>
+                                                    Tu :
+                                                <% } else{ %>
+                                                    <%= datos[i].nombre %> :
+                                                <% } %>
+                                            </span> 
+                                            <%= datos[i].ultimo_mensaje %>  <span class="text-success"><%= datos[i].fecha_ultimo_mensaje %></span> 
+                                            <% if(datos[i].mensajes_no_vistos!==0 && datos[i].id_usuario_ultimo_mensaje !== session.id_user) { %>
+                                                <span class=" badge rounded-circle bg-success" id="mensajes_no_vistos<%= datos[i].id%>"><%= datos[i].mensajes_no_vistos%></span>
+                                            <% } %>
+                                        </p>
+                                    </div>
+                                </div>                        
+                                <form  id="form<%= datos[i].id%>" action="/usuarios/chat" method="GET" >
+                                    <input type="hidden"  name="id_chat" value="<%= datos[i].id%>">
+                                    <input type="hidden"  name="id_receptor" value="<%= datos[i].id_receptor%>">
+                                    <input type="hidden"  name="nombre_receptor" value="<%= datos[i].nombre%>">
+                                    <input type="hidden"  name="id_usuario_ultimo_mensaje" value="<%= datos[i].id_usuario_ultimo_mensaje%>">
+                                    <input type="hidden"  id="input_mensajes_no_vistos<%= datos[i].id%>" name="mensajes_no_vistos" value="<%= datos[i].mensajes_no_vistos%>">
+                                </form>  
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <%- include('./footer'); %>
+</body>
+<script src="/javascripts/header.js"></script>
+<script src="/javascripts/misChats.js"></script>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <%- include('links')%>
+
+    <title>Inicio</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+       <%- include('./header'); %>
+        <!-- barra de navegación-->
+        <div class="p-3 mb-5 bg-secondary w-100">
+            <div class="row">
+                <div class="col-4">
+                    <select class="form-control" id="profesion" name="profesion">
+                        <option value="pintor">Pintor</option>
+                        <option value="electricista">Electricista</option>
+                        <option value="albanil">Albañil</option>
+                        <option value="fontanero">Fontanero</option>
+                        <option value="cerrajero">Cerrajero</option>
+                        <option value="carpintero">Carpintero</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <select class="form-control" id="Ubicacion" name="Ubicacion"  style="width: 100%; height:25px">
+                        <option value="alava">Álava</option>
+                        <option value="albacete">Albacete</option>
+                        <option value="alicante">Alicante</option>
+                        <option value="almeria">Almería</option>
+                        <option value="asturias">Asturias</option>
+                        <option value="avila">Ávila</option>
+                        <option value="badajoz">Badajoz</option>
+                        <option value="barcelona">Barcelona</option>
+                        <option value="burgos">Burgos</option>
+                        <option value="caceres">Cáceres</option>
+                        <option value="cadiz">Cádiz</option>
+                        <option value="cantabria">Cantabria</option>
+                        <option value="castellon">Castellón</option>
+                        <option value="ciudad_real">Ciudad Real</option>
+                        <option value="cordoba">Córdoba</option>
+                        <option value="la_coruna">La Coruña</option>
+                        <option value="cuenca">Cuenca</option>
+                        <option value="gerona">Gerona</option>
+                        <option value="granada">Granada</option>
+                        <option value="guadalajara">Guadalajara</option>
+                        <option value="guipuzcoa">Guipúzcoa</option>
+                        <option value="huelva">Huelva</option>
+                        <option value="huesca">Huesca</option>
+                        <option value="islas_baleares">Islas Baleares</option>
+                        <option value="jaen">Jaén</option>
+                        <option value="leon">León</option>
+                        <option value="lerida">Lérida</option>
+                        <option value="lugo">Lugo</option>
+                        <option value="madrid">Madrid</option>
+                        <option value="malaga">Málaga</option>
+                        <option value="murcia">Murcia</option>
+                        <option value="navarra">Navarra</option>
+                        <option value="orense">Orense</option>
+                        <option value="palencia">Palencia</option>
+                        <option value="las_palmas">Las Palmas</option>
+                        <option value="pontevedra">Pontevedra</option>
+                        <option value="salamanca">Salamanca</option>
+                        <option value="segovia">Segovia</option>
+                        <option value="sevilla">Sevilla</option>
+                        <option value="soria">Soria</option>
+                        <option value="tarragona">Tarragona</option>
+                        <option value="santa_cruz_de_tenerife">Santa Cruz de Tenerife</option>
+                        <option value="teruel">Teruel</option>
+                        <option value="toledo">Toledo</option>
+                        <option value="valencia">Valencia</option>
+                        <option value="valladolid">Valladolid</option>
+                        <option value="vizcaya">Vizcaya</option>
+                        <option value="zamora">Zamora</option>
+                        <option value="zaragoza">Zaragoza</option>
+                    </select>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-dark w-100" id="busqueda">Buscar</button>
+                </div>
+            </div>
+        </div>
+       
+        <div id="contenedor">
+            <% for(var i = 0; i < trabajadores.length; i++) { %>
+                <% if (i % 3 === 0) { %>
+                    <div class="row">
+                <% } %>
+                <div class=" col-lg-4 col-12 mb-4">
+                    <div class="card border-dark mx-auto link h-100" data-id="<%= trabajadores[i].id_usuario %>">
+                        <div class="row g-0">
+                            <% if(trabajadores[i].foto_perfil!==null) { %>
+                                <img class="img-fluid card-img-top" src="data:image/png; base64, <%= ((new Buffer(trabajadores[i].foto_perfil)).toString('base64')) %>" alt="Foro de perfil de <%=trabajadores[i].nombre %>">
+                            <%} else {%>
+                                <img class="img-fluid card-img-top" src="/images/noUsuario.png" alt="El trabajador<%=trabajadores[i].nombre %> no tiene foto perfil" >
+                            <% } %>
+                            <div class="col-12">
+                                <div class="card-header text-center">
+                                    <h5 class="card-title"><%= trabajadores[i].nombre %></h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text">Profesión: <%= trabajadores[i].profesion %></p>
+                                    <p class="card-text">Ubicación: <%= trabajadores[i].ubicacion %></p>
+                                    <p class="card-text"> Puntuacion: <%= trabajadores[i].puntuacion %>
+                                        <% for(var j=0; j< Math.round(trabajadores[i].puntuacion); j++) { %>
+                                            <img class="img-fluid" src="/images/estrella.png" style="width: 25px; height: auto;" alt="Estrella valoración">
+                                        <% } %>
+                                    </p>
+                                    
+                                </div>
+                                <form  id="form<%= trabajadores[i].id_usuario %>"  action="/trabajador" method="GET">
+                                    <input type="hidden" name="id" value="<%= trabajadores[i].id_usuario %>">
+                                    <input type="hidden" name="nombre" value="<%= trabajadores[i].nombre %>">
+                                </form>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <% if ((i + 1) % 3 === 0 || i === trabajadores.length - 1) { %>
+                    </div>
+                <% } %>
+            <% } %>
+        </div>
+        <%- include('./footer'); %>
+</body>
+<script src="/javascripts/paginaInicio.js"></script>
+<script src="/javascripts/header.js"></script>
+</html>

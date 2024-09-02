@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+   <%- include('links')%>
+    <title>Mi Perfil</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <%- include('./header'); %>
+    <div class="container-fluid mb-2">
+        <div class="row mt-2">
+          <div class="col-7 offset-1">
+            <div id="caruselFotos" class="carousel slide mx-auto border border-dark" data-bs-ride="false">
+                <div class="carousel-indicators ">
+                    <% if(miPerfil.fotos.length !== 0) { %>
+                        <button type="button" data-bs-target="#caruselFotos" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <% for (let i = 1; i < miPerfil.fotos.length; i++) { %>
+                            <button type="button" data-bs-target="#caruselFotos" data-bs-slide-to="<%= i %>" aria-label="Slide <%= i %>"></button>
+                        <% } %>
+                    <% } %>
+                </div>
+        
+                <div class="carousel-inner">
+                    <% if(miPerfil.fotos.length !== 0) { %>
+                        <div class="carousel-item active item-align-center" data-id_foto="<%= miPerfil.fotos[0].id_foto %>">
+                            <img src="data:image/png;base64, <%= Buffer.from(miPerfil.fotos[0].foto, 'base64').toString('base64') %>" class="img-fluid mx-auto h-100">
+                            
+                        </div>
+                        <% for (let i = 1; i < miPerfil.fotos.length; i++) { %>
+                            <div class="carousel-item item-align-center" data-id_foto="<%= miPerfil.fotos[i].id_foto %>">
+                                <img src="data:image/png;base64, <%= Buffer.from(miPerfil.fotos[i].foto, 'base64').toString('base64') %>" class="img-fluid self-ah-100">
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+              
+            </div>
+            <% if(miPerfil.fotos.length !== 0) { %>
+            <button type="button" class="btn btn-danger w-100" id="boton-borrar" >Borrar foto actual</button>
+            <% } %>
+            <button type="button" class="btn btn-success w-100" id="addFoto"> Añadir Foto</button>
+          </div>
+          <div class="col-3">
+            <textarea name="descripcion" id="textoDescripcion" class="w-100 form-control" rows="25"  placeholder="Ingrese su descripción"><%=miPerfil.perfil[0].descripcion%></textarea>
+            <div id="contador-caracteres"><%=500-miPerfil.perfil[0].descripcion.length%> caracteres restantes</div>
+            <div class="row">
+              <input type="input" class="form-control w-100" id="telefono" name="telefono" placeholder="Ingrese su numero de telefono"  value="<%=miPerfil.perfil[0].telefono%>">
+            </div>
+            <div class="row">
+              <select class="form-control" id="ubicacion" name="ubicacion"  style="width: 100%;">
+                <option value="alava">Álava</option>
+                <option value="albacete">Albacete</option>
+                <option value="alicante">Alicante</option>
+                <option value="almeria">Almería</option>
+                <option value="asturias">Asturias</option>
+                <option value="avila">Ávila</option>
+                <option value="badajoz">Badajoz</option>
+                <option value="barcelona">Barcelona</option>
+                <option value="burgos">Burgos</option>
+                <option value="caceres">Cáceres</option>
+                <option value="cadiz">Cádiz</option>
+                <option value="cantabria">Cantabria</option>
+                <option value="castellon">Castellón</option>
+                <option value="ciudad_real">Ciudad Real</option>
+                <option value="cordoba">Córdoba</option>
+                <option value="la_coruna">La Coruña</option>
+                <option value="cuenca">Cuenca</option>
+                <option value="gerona">Gerona</option>
+                <option value="granada">Granada</option>
+                <option value="guadalajara">Guadalajara</option>
+                <option value="guipuzcoa">Guipúzcoa</option>
+                <option value="huelva">Huelva</option>
+                <option value="huesca">Huesca</option>
+                <option value="islas_baleares">Islas Baleares</option>
+                <option value="jaen">Jaén</option>
+                <option value="leon">León</option>
+                <option value="lerida">Lérida</option>
+                <option value="lugo">Lugo</option>
+                <option value="madrid">Madrid</option>
+                <option value="malaga">Málaga</option>
+                <option value="murcia">Murcia</option>
+                <option value="navarra">Navarra</option>
+                <option value="orense">Orense</option>
+                <option value="palencia">Palencia</option>
+                <option value="las_palmas">Las Palmas</option>
+                <option value="pontevedra">Pontevedra</option>
+                <option value="salamanca">Salamanca</option>
+                <option value="segovia">Segovia</option>
+                <option value="sevilla">Sevilla</option>
+                <option value="soria">Soria</option>
+                <option value="tarragona">Tarragona</option>
+                <option value="santa_cruz_de_tenerife">Santa Cruz de Tenerife</option>
+                <option value="teruel">Teruel</option>
+                <option value="toledo">Toledo</option>
+                <option value="valencia">Valencia</option>
+                <option value="valladolid">Valladolid</option>
+                <option value="vizcaya">Vizcaya</option>
+                <option value="zamora">Zamora</option>
+                <option value="zaragoza">Zaragoza</option>
+            </select>
+            </div>
+            <div class="row">
+              <button type="button" class="btn btn-dark w-100 mt-3" id="confirmarCambios"> Confirmar cambios</button>
+            </div>
+          </div>
+        </div>
+        
+          <div class="modal fade" id="modalAddFoto" tabindex="-1" role="dialog" aria-labelledby="modalAddFoto" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Subir Foto</h5>
+                    <button type="button" id="cruzcerrar" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Formulario de carga de imagen -->
+                    <form id="uploadForm" action="/usuarios/addFoto" method="POST" enctype="multipart/form-data">
+                      <div class="form-group">
+                        <label for="imageInput">Selecciona una imagen (PNG, hasta 5 MB):</label>
+                        <input type="file" name="fotoTrabajo" class="form-control-file" id="imageInput" accept="image/png"></input>
+                        <p id="errorInput" class="text-danger"></p>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" id="botonCerrar" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="subirFoto" data-id_trabajador="<%= miPerfil.perfil[0].id_usuario %>" >Subir</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!---->
+            <div class="modal fade" id="modalConfirmar" tabindex="-1" role="dialog" aria-labelledby="modalConfirmar" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >¿Quieres borrar la foto?</h5>
+                    <button type="button" class="close CerrarConfirmar" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-footer mx-auto">
+                    <button type="button" class="btn btn-secondary CerrarConfirmar" >Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="ConfirmarBorrar" >Borrar foto</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+    </div>
+    <%- include('./footer'); %>
+</body>
+<script src="/javascripts/miPerfil.js"></script>
+<script src="/javascripts/header.js"></script>
+</html>

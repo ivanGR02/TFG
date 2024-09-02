@@ -1,0 +1,119 @@
+<script type="module">
+    import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+    const socket = io({
+        auth: {
+            id_user: "<%= session.id_user %>",
+        }
+    });
+
+    socket.on('chat message',function(datos){
+        //para cambiar el circulo del boton mensajes
+        var mensajes= $("#mensajes").attr("data-mensajes");
+        mensajes++;
+        $("#mensajes").empty();
+        var mens=` Mis chats
+        <span class=" p-1 bg-danger border border-light rounded-circle">
+            ${mensajes}
+        </span>`
+        $("#mensajes").append(mens);
+        //modificar las cartas o añadir una nueva
+        let info= $(`#datosMensaje${datos.id_chat}`)
+        if(info.length){
+            var circulo=``
+            var nombre=$(`#datosMensaje${datos.id_chat}`).data('nombre');
+            var ahora = new Date();
+            var horas = ahora.getHours();
+            var minutos = ahora.getMinutes();
+            var hora = horas.toString().padStart(2, '0') + ":" + minutos.toString().padStart(2, '0');
+            let texto=$(`#mensajes_no_vistos${datos.id_chat}`);
+            var numero=1;
+            if(texto.length){
+                numero=parseInt(texto.text());
+                numero++;
+            }
+            circulo=`
+            <span class="text-dark"> ${nombre} : </span>
+            ${datos.message}
+            <span class="text-success">${hora}</span>
+            <span class=" badge rounded-circle bg-success" id="mensajes_no_vistos${datos.id_chat}">
+                ${numero}
+            </span>
+            `
+            var inputNumMensajes= "input_mensajes_no_vistos" + datos.id_chat;
+            var numMensajesNew =parseInt($("#"+inputNumMensajes).val())+1;
+            $("#"+inputNumMensajes).val(numMensajesNew);
+            info.empty();
+            info.append(circulo);
+        }
+        else{//hay que crear una nueva carta con los datos de la persona que te acaba de escribir
+            $.ajax({//coger los datos del nuevo usuario y también del nuevo chat creado para el form
+                url: '/usuarios/datosChat',
+                method: 'GET',
+                data: { id_emisor: datos.emisor},
+                success: function(response) {
+                    var imagen= fotoUsuario(response.foto_perfil)
+                    var ahora = new Date();
+                    var horas = ahora.getHours();
+                    var minutos = ahora.getMinutes();
+                    var hora = horas.toString().padStart(2, '0') + ":" + minutos.toString().padStart(2, '0');
+                    var card=`
+                    <div class="row mt-3">
+                        <div class="col-12 col-lg-8 mx-auto">
+                            <div class="card border-dark link" data-id="${datos.id_chat}">
+                                <div class="row">
+                                    <div class="col-2"> 
+                                        <img class="img-fluid w-100" src=${imagen}>  
+                                    </div>
+                                    <div class="col-10 mb-1 mx-auto">
+                                        
+                                        <h2 class="card-title">${response.nombre}</h2>
+                
+                                        <div class="card-body">
+                                            <p class="text-muted" id="datosMensaje${datos.id_chat}" data-nombre="${response.nombre}">
+                                                <span class="text-dark"> ${response.nombre} : </span>
+                                                ${datos.message}
+                                                <span class="text-success">${hora}</span>
+                                                <span class=" badge rounded-circle bg-success" id="mensajes_no_vistos${datos.id_chat}">
+                                                    1
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>                        
+                                    <form  id="form${datos.id_chat}" action="/usuarios/chat" method="GET" >
+                                        <input type="hidden"  name="id_chat" value="${datos.id_chat}">
+                                        <input type="hidden"  name="id_receptor" value="${datos.receptor}">
+                                        <input type="hidden"  name="nombre_receptor" value="${response.nombre}">
+                                        <input type="hidden"  name="id_usuario_ultimo_mensaje" value="${datos.receptor}">
+                                        <input type="hidden" id="input_mensajes_no_vistos${datos.id_chat}" name="mensajes_no_vistos" value="1">
+                                    </form>  
+                                </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+                    `
+                    $("#noChats").remove();
+                    $('#conversaciones').prepend(card);
+                }
+                
+            })
+        }
+        
+    });
+
+    function fotoUsuario(foto){
+        if(foto===null)
+            return "/images/noUsuario.png";
+        return  arrayBufferToBase64(foto.data);
+
+    }
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+</script>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+   <%- include('links')%>
+   <link rel="stylesheet" href="/stylesheets/calendario.css">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <title>Mi calendario</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <%- include('./header'); %>
+    <div class="container-fluid">   
+        <div class="text-center">
+            <h1 class="text-secondary ">Agenda</h1>
+        </div>
+        <div class="calendar col-10-md mx-auto border border-dark border-3">
+            <div class=" d-flex align-items-center px-5">
+                <div class=" mr-auto" id="prev-month">&#9664;</div>
+                <div class="mx-auto d-flex"><!--Para que el mes y año salgan pegados-->
+                    <div class=" mr-3" id="month"> </div>
+                    <div class=" ml-3" id="year"></div>
+                </div>
+                <div class=" ml-auto" id="next-month">&#9654;</div>
+            </div>
+            <div class="row">
+                <div class="d-flex  flex-row justify-content-evenly ">
+                    <div class=" calendar__name w-100 ">Lun</div>
+                    <div class=" calendar__name w-100 ">Mar</div>
+                    <div class=" calendar__name w-100 ">Mie</div>
+                    <div class=" calendar__name w-100 ">Jue</div>
+                    <div class=" calendar__name w-100 ">Vie</div>
+                    <div class=" calendar__name w-100 ">Sab</div>
+                    <div class=" calendar__name w-100 ">Dom</div>
+                </div>
+            </div>
+           
+
+            <div class="calendar__dates" id="dates"></div>
+
+        </div>
+        <div class="row mt-2">
+            <button type="button" class="btn btn-primary w-50 mx-auto" data-bs-toggle="modal" data-bs-target="#reservaLargaModal">Hacer reserva larga</button>
+        </div>
+        <div class="row mt-2">
+            <button type="button" class="btn btn-primary w-50 mx-auto"  data-bs-toggle="modal" data-bs-target="#reservaCortaModal">Hacer reserva corta</button>
+        </div>
+        <div class="modal fade" id="reservaLargaModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Reserva Larga</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                          <div class="form-group">
+                            <label for="Nombre">Nombre:</label>
+                            <input type="input" class="form-control" id="NombreReservaLarga" name="Nombre">
+                          </div>
+                          <div class="form-group">
+                            <label for="Ubicacion">Ubicacion:</label>
+                            <input type="input" class="form-control" id="UbicacionReservaLarga" name="Ubicacion">
+                          </div>
+                          <div class="form-group">
+                            <label for="DiaInicio">Dia Inicio:</label>
+                            <input type="date" class="form-control" id="DiaInicioReserva" name="DiaInicio">
+                          </div>
+                          <div class="form-group">
+                            <label for="DiaFin">Dia final:</label>
+                            <input type="date" class="form-control" id="DiaFinReserva" name="DiaFin">
+                          </div>
+                          <div class="form-group">
+                            <label for="Color">Color:</label>
+                            <input type="color" class="form-control" id="colorReservaLarga" name="color" value="#000000">
+                          </div>
+                          <div class="form-group">
+                            <label for="Descripcion">Descripcion:</label><br>
+                            <textarea id="DescripcionLarga" name="Descripcion" class="w-100"></textarea>
+                        </div>
+                        <div class="form-group mt-2">
+                            <div class="row">
+                                <button type="button" id="hacerReservaLarga" class="btn btn-dark w-50">Reservar</button>
+                                <button type="button" id="reservaCorta" class="btn btn-dark w-50" >Reserva corta</button>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="reservaCortaModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Reserva corta</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                          <label for="Nombre">Nombre:</label>
+                          <input type="input" class="form-control" id="NombreReservaCorta" name="Nombre">
+                        </div>
+                        <div class="form-group">
+                          <label for="Ubicacion">Ubicacion:</label>
+                          <input type="input" class="form-control" id="UbicacionReservaCorta" name="Ubicacion">
+                        </div>
+                        <div class="form-group">
+                          <label for="Dia">Dia:</label>
+                          <input type="date" class="form-control" id="DiaReserva" name="Dia">
+                        </div>
+                        <div class="form-group">
+                          <label for="HoraInicio">Hora Inicio:</label>
+                          <input type="time" class="form-control" id="HoraInicio" name="HoraInicio">
+                        </div>
+                        <div class="form-group">
+                            <label for="HoraFin">Hora Fin:</label>
+                            <input type="time" class="form-control" id="HoraFin" name="HoraFin">
+                        </div>
+                        <div class="form-group"> 
+                          <label for="Color">Color:</label>
+                          <input type="color" class="form-control" id="colorReservaCorta" name="color" value="#000000">
+                        </div>
+                        <div class="form-group">
+                          <label for="Descripcion">Descripcion:</label><br>
+                          <textarea id="DescripcionCorta" name="Descripcion" class="w-100"></textarea>
+                      </div>
+                      <div class="form-group mt-2">
+                          <div class="row">
+                              <button type="button" id="hacerReservaCorta" class="btn btn-dark w-50">Reservar</button>
+                              <button type="button" id="reservaLarga" class="btn btn-dark w-50">Reserva larga</button> 
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="agendaModal" tabindex="-1" aria-labelledby="agendaModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg"> 
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 id="agendaModalLabel">Agenda <span id="fechaAgenda"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div id="agenda">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    <div class="modal fade" id="reservaLargaUpdateModal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h2 class="modal-title">Reserva Larga</h2>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                    <div class="form-group">
+                      <label for="Nombre">Nombre:</label>
+                      <input type="input" class="form-control" id="NombreReservaUpdateLarga" name="Nombre">
+                    </div>
+                    <div class="form-group">
+                      <label for="Ubicacion">Ubicacion:</label>
+                      <input type="input" class="form-control" id="UbicacionReservaUpdateLarga" name="Ubicacion">
+                    </div>
+                    <div class="form-group">
+                      <label for="DiaInicio">Dia Inicio:</label>
+                      <input type="date" class="form-control" id="DiaInicioReservaUpdate" name="DiaInicio">
+                    </div>
+                    <div class="form-group">
+                      <label for="DiaFin">Dia final:</label>
+                      <input type="date" class="form-control" id="DiaFinReservaUpdate" name="DiaFin">
+                    </div>
+                    <div class="form-group">
+                      <label for="Color">Color:</label>
+                      <input type="color" class="form-control" id="colorReservaLargaUpdate" name="color" value="#000000">
+                    </div>
+                    <div class="form-group">
+                      <label for="Descripcion">Descripcion:</label><br>
+                      <textarea id="DescripcionLargaUpdate" name="Descripcion" class="w-100"></textarea>
+                  </div>
+                  <div class="form-group mt-2">
+                      <div class="row">
+                          <button type="button" id="borrarReservaLarga" class="btn btn-danger w-50" data-reserva="">Borrar reserva</button>
+                          <button type="button" id="UpdateReservaLarga" class="btn btn-success w-50" data-reserva="">Modificar reserva</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+    <div class="modal fade" id="reservaCortaModalUpdate">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h2 class="modal-title">Reserva corta</h2>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="form-group">
+                    <label for="Nombre">Nombre:</label>
+                    <input type="input" class="form-control" id="NombreReservaCortaUpdate" name="Nombre">
+                  </div>
+                  <div class="form-group">
+                    <label for="Ubicacion">Ubicacion:</label>
+                    <input type="input" class="form-control" id="UbicacionReservaCortaUpdate" name="Ubicacion">
+                  </div>
+                  <div class="form-group">
+                    <label for="DiaReservaUpdate">Dia:</label>
+                    <input type="date" class="form-control" id="DiaReservaUpdate" name="Dia">
+                  </div>
+                  <div class="form-group">
+                    <label for="HoraInicioUpdate">Hora Inicio:</label>
+                    <input type="time" class="form-control" id="HoraInicioUpdate" name="HoraInicioUpdate">
+                  </div>
+                  <div class="form-group">
+                      <label for="HoraFin">Hora Fin:</label>
+                      <input type="time" class="form-control" id="HoraFinUpdate" name="HoraFin">
+                  </div>
+                  <div class="form-group"> 
+                    <label for="Color">Color:</label>
+                    <input type="color" class="form-control" id="colorReservaCortaUpdate" name="color" value="#000000">
+                  </div>
+                  <div class="form-group">
+                    <label for="Descripcion">Descripcion:</label><br>
+                    <textarea id="DescripcionCortaUpdate" name="Descripcion" class="w-100"></textarea>
+                </div>
+                <div class="form-group mt-2">
+                    <div class="row">
+                        <button type="button" id="BorrarReservaCorta" class="btn btn-danger w-50" data-reserva="">Borrar reserva</button>
+                        <button type="button" id="UpdatereservaCorta" class="btn btn-success w-50" data-reserva="">Modificar reserva</button> 
+                    </div>
+                </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+    <%- include('./footer'); %>
+</body>
+<script src="/javascripts/paginaInicio.js"></script>
+<script src="/javascripts/calendario.js"></script>
+
+</html>

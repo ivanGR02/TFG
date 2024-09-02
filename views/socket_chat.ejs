@@ -1,0 +1,80 @@
+
+<script type="module">
+    import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+    const socket = io({
+        auth: {
+            id_user: "<%= session.id_user %>",
+        }
+    });
+    $(function(){ 
+    scrollHaciaAbajo()
+    socket.on('chat message',function(datos){
+        if(datos.emisor===$("#chat").data("receptor")){//es decir el mensaje que me llega es el de este chat
+            //añado el mensaje a la conversacion
+            var mens=`
+            <li class="d-flex justify-content-star"> 
+                <p class="suMensaje">${datos.message}</p>
+            </li>`
+            $("#mensajesChat").append(mens);
+            scrollHaciaAbajoSuave();
+            $.ajax({
+                url: "/usuarios/mensajeVisto",
+                method: "POST",
+                data:{id_chat:$("#chat").data("id_chat")
+                }
+            })
+        }else{//es decir el mensaje que me llega es de otro chat
+            //añado el mensaje al contador de mensajes
+            var mensajes= $("#mensajes").attr("data-mensajes");
+            mensajes++;
+            $("#mensajes").empty();
+            var mens=` Mis chats
+            <span class=" p-1 bg-danger border border-light rounded-circle">
+                ${mensajes}
+            </span>`
+            $("#mensajes").append(mens);
+        }
+    });
+
+    socket.on('mensajeError', (data) => {
+        alert('Error al enviar el mensaje: ' + errorMsg);
+    });
+    
+        $("#enviar").on('click',function(){
+           enviarMensaje();
+        })
+        $('#texto').keypress(function(e){
+            if(e.which == 13){ // Enter es  el código 13
+                enviarMensaje();
+            }
+        });
+        function enviarMensaje(){
+            if( $("#texto").val()!== ""){
+                var input={};
+                var mensaje =  $("#texto").val();
+                input.message= mensaje;
+                input.id_chat=$("#chat").data("id_chat");
+                input.emisor= $("#chat").data("emisor");
+                input.receptor= $("#chat").data("receptor");
+                var mens=`
+                <li class="d-flex justify-content-end"> 
+                    <p class="miMensaje">${mensaje}</p>
+                </li>`;
+                $("#mensajesChat").append(mens);
+                $('#texto').val('');
+                socket.emit('chat message',input)
+                scrollHaciaAbajoSuave();
+            }
+        }
+        function scrollHaciaAbajo() {
+            var container = $('#mensajesChat');
+            container.scrollTop(container.prop("scrollHeight"));
+        }
+        function scrollHaciaAbajoSuave() {
+            var container = $('#mensajesChat');
+            container.animate({
+            scrollTop: container.prop("scrollHeight")
+        }, 500);
+        }
+    })
+</script>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+   <%- include('links')%>
+    <title>Perfil de <%= trabajador.nombre%></title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <%- include('./header'); %>
+    <div class="container-fluid">
+        <div class="row"> 
+            <div class="col-10 mx-auto text-center">
+                <h1><%= trabajador.nombre%></h1>
+            </div>
+        </div>
+        <% if(trabajador.fotos.length !==0){ %>
+            <div class="row col-8 mx-auto mb-3">
+                <div id="caruselFotos" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#caruselFotos" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <% for (let i=1; i<trabajador.fotos.length ;i++){ %>
+                            <button type="button" data-bs-target="#caruselFotos" data-bs-slide-to="<%=i%>" aria-label="Slide <%=i%>"></button>
+                        <%}%>
+                    </div>
+                    
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="data:image/png; base64, <%= ((new Buffer(trabajador.fotos[0].foto)).toString('base64')) %>">            
+                        </div>
+                         <% for (let i=1; i<trabajador.fotos.length ; i++) { %>
+                        <div class="carousel-item">
+                            <img class="d-block w-100" src="data:image/png; base64, <%= ((new Buffer(trabajador.fotos[i].foto)).toString('base64')) %>">
+                        </div>
+                        <%}%>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#caruselFotos" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#caruselFotos" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                    </button>
+                </div>
+            </div>
+        <% } %>
+        <!--div para ver si la session esta abierta y para pasar parametros al hacer peticiones ajax-->
+        <div id="session" data-session="<%=user%>" data-trabajador="<%= trabajador.id %>"></div>
+       
+        <div class="row mx-auto">
+            <div class="col-md-11 offset-1">
+                <h2> Sobre mi</h2>
+            <p><%=trabajador.descripcion %></p>
+            <h2> Datos de contacto</h2>
+            <p> <strong>Telefono:</strong> <%= trabajador.telefono %></p>
+            <p> <strong>Provincia:</strong> <%= trabajador.ubicacion %></p>
+            </div>
+        </div>
+         <!--Boton abrir chat-->
+         <div class="row mb-5">
+            <div class="col-12 mx-auto text-center">
+                <form id="abrirChat"  action="/usuarios/crearChat" method="POST">
+                    <input type="hidden" name="id" value="<%= trabajador.id %>">
+                    <button id="Chat" class="btn btn-primary w-25">Abrir Chat</button>
+                </form>
+            </div>
+        </div>
+        <!--Mirar comentarios sobre el trabajador-->
+        <div class="row">
+            <div class="col-12 mx-auto text-center">
+                <button id="botonComentarios" class="btn btn-secondary w-25" data-id_trabajador="<%=trabajador.id%>">Comentarios</button>
+            </div>
+        </div>
+        <!--Cerrar los comentarios sobre el trabajador-->
+        <div id="gestionComentarios" class="row d-flex justify-content-center d-none mb-3">
+            <div class="col-2">
+                <button id="prevPageButton" class="btn btn-outline-secondary w-100">
+                    <span class="fas fa-chevron-left"></span> Anterior
+                </button>
+            </div>
+            <div class="col-5">
+                <button id="cerrarComentarios" class="btn btn-danger w-100">Cerrar comentarios</button>
+            </div>
+           <div class="col-2">
+            <button id="nextPageButton" class="btn btn-outline-secondary w-100">
+                Siguiente <span class="fas fa-chevron-right"></span>
+            </button>
+           </div>
+        </div>
+       
+        <!--Donde se pondran los comentarios al abrir comentarios-->
+        <div id="comentarios"></div>
+       
+        
+        <div class="row">
+            <div class="col-md-11 offset-1">
+                <h2> Da tu valoración</h2>
+            </div>
+            <div class="col-md-11 offset-1 mb-3">
+                <div class="rating">
+                    <% for(var i=1;i<6;i++) { %>
+                        <%if (i===trabajador.puntuacion) { %>
+                            <button type="button" class="miPuntuacion btn btn-warning" value="<%=i%>"><%=i%></button>
+                        <%} else { %>
+                            <button type="button" class="puntuacion btn btn-outline-secondary" value="<%=i%>"><%=i%></button>
+                        <%}%>
+                    <% } %>
+                </div>
+            </div>
+            <input type="hidden" name="id_trabajador" >
+            <div class="col-10 mx-auto">
+                <textarea name="comentario" id="textoComentario" class="w-100" rows="10"  placeholder="Ingrese su comentario"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <button type="submit"id="Comentario" class="btn btn-outline-dark w-25 mx-auto mb-2"  >Hacer Comentario</button>
+        </div>
+    </div>
+    <%- include('./footer'); %>
+</body>
+<script src="/javascripts/perfilTrabajador.js"></script>
+<script src="/javascripts/header.js"></script>
+</html>

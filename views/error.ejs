@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <%- include('links')%>
+    <title>Error</title>
+</head>
+<body class="d-flex flex-column min-vh-100">
+       <%- include('./header'); %>
+       <div class="m-auto ">
+        <h1 class="display-1"><%= codigo %>: <%= mensaje%></h1>
+       </div>
+        <%- include('./footer'); %>
+</body>
+<script src="/javascripts/header.js"></script>
+</html>

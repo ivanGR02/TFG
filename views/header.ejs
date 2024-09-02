@@ -1,0 +1,121 @@
+<% if(!user) { %>
+    <nav class="navbar navbar-expand-md navbar-light bg-info">
+        <div class="container-fluid" id="NAV">
+            <div class="navbar-brand" id="logoMarca">
+                <img class="image-fluid w-100 h-100 border border-warning border-3" alt="Logo Manitas" src="/images/logo.png">
+            </div>
+            <button class="navbar-toggler mx-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav w-100">
+                    <li class="nav-item w-100">
+                        <form action="/" method="GET" class="d-flex">
+                            <button type="submit" class="btn btn-dark w-100 h-100">Inicio</button>
+                        </form>
+                    </li>
+                    <li class="nav-item w-100">
+                        <button type="button" class="btn btn-outline-light w-100 h-100" id="inicioSesion">Iniciar sesión</button>
+                    </li>
+                    <li class="nav-item w-100">
+                        <button type="button" class="btn btn-outline-light w-100 h-100" id="registroUsuario">Registrarse</button>
+                    </li>
+                    <li class="nav-item w-100">
+                        <button type="button" class="btn btn-outline-light w-100 h-100" id="registroTrabajador">Registrarse como trabajador</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <% } else { %>
+    <nav class="navbar navbar-expand-md navbar-light bg-info">
+        <div class="container-fluid" id="NAV">
+            <div class="navbar-brand" id="logoMarca">
+                <img class="image-fluid w-100 h-100 border border-warning border-3" alt="Logo Manitas" src="/images/logo.png">
+            </div>
+            <button class="navbar-toggler mx-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav w-100">
+                    <li class="nav-item w-100">
+                        <form action="/" method="GET" class="d-flex">
+                            <button type="submit" class="btn btn-dark w-100 h-100">Inicio</button>
+                        </form>
+                    </li>
+                    <li class="nav-item w-100">
+                        <form action="/usuarios/logout" method="GET" class="d-flex" role="search">
+                            <button type="submit" id="CerrarSesion" class="btn btn-danger w-100 h-100">Cerrar sesion</button>
+                        </form>
+                    </li>
+                    <% if (!session.trabajador) { %>
+                    <li class="nav-item w-100" id="premium">
+                        <button type="button" class="btn btn-outline-light w-100 h-100" id="PasarTrabajador">Hacerse Trabajador</button> 
+                    </li>
+                    <% } %>
+                    <% if (session.trabajador) { %>
+                    <li class="nav-item w-100" id="perfil" >
+                        <form action="/usuarios/miPerfil" method="GET" class="d-flex " role="search"> 
+                            <button type="submit" class="btn btn-light w-100 h-100">Mi perfil</button>
+                        </form>   
+                    </li>
+                    <li class="nav-item w-100" id="calendario">
+                        <form action="/usuarios/calendario" method="GET" class="d-flex" role="search"> 
+                            <button type="submit" class="btn btn-light w-100 h-100">Mi agenda</button>
+                        </form>  
+                    </li>
+                    <% } %>
+                    <li class="nav-item w-100">
+                        <form action="/usuarios/misMensajes" method="GET" class="d-flex" role="search"> 
+                            <button type="submit" class="btn btn-light w-100 h-100" id="mensajes" data-mensajes="<%= session.mensaje %>">Mis chats
+                                <% if (session.mensaje !==0) { %>
+                                    <span class="translate-middle p-1 bg-danger border border-light rounded-circle"><%= session.mensaje %></span>
+                                <% } %>
+                            </button>
+                        </form>   
+                    </li>
+                </ul>
+            </div>
+        </div>
+         
+        <div id="divFotoPerfil" class="w-25 d-flex justify-content-center d-none d-md-flex">
+            <% if (user) { %>
+                <% if(session.foto===null){ %>
+                    <img class="img-fluid border border-dark border-3 h-100" src="/images/noUsuario.png" id="fotoPerfil" alt="foto Perfil">
+                   
+                <%}else{%>
+                    <img src="data:image/png; base64, <%= ((new Buffer(session.foto)).toString('base64')) %>" id="fotoPerfil" class="img-fluid w-50 border border-dark border-3 h-100" alt="foto Perfil">
+                <%}%>
+            <%}%>
+        </div>
+    </nav>
+    <script type="module">
+
+        import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
+        const socket = io({
+            auth: {
+                id_user: "<%= session.id_user %>",
+            }
+        });
+
+        socket.on('chat message',function(datos){
+            var mensajes= $("#mensajes").attr("data-mensajes");
+            mensajes++;
+            $("#mensajes").attr("data-mensajes",mensajes);
+            $("#mensajes").empty();
+            var mens=` Mis chats
+            <span class=" p-1 bg-danger border border-light rounded-circle">
+                ${mensajes}
+            </span>`
+            $("#mensajes").append(mens);
+        });
+        socket.on('mensajeError', (data) => {
+            alert('Error al enviar el mensaje: ' + errorMsg);
+        });
+    </script>
+    <% } %>
+
+<%- include('./modalesinicioregistro'); %>
+
+
+    

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+   <%- include('links')%>
+   <link rel="stylesheet" href="/stylesheets/chat.css">
+    <title>Chats</title>
+    <%- include('socket_chat')%>
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <%- include('./header_sin_socket'); %>
+    <div class="container-fluid mb-2">
+       <div class="row"> 
+            <div class="col-10 mx-auto text-center">
+                <h1>Estas hablando con <%= data.nombre%></h1>
+            </div>
+        </div>
+        <div id="chat" class="col-md-8 mx-auto border border-dark h-100" data-id_chat="<%=data.id_chat%>" data-emisor="<%=session.id_user %>" data-receptor="<%=data.id_receptor %>">
+            <ul id="mensajesChat" class="overflow-auto">
+                <% for(var i = 0; i < data.length; i++) { %>
+                    <% if(data[i].usuario_id===session.id_user){ %>
+                        <li class="d-flex justify-content-end"> 
+                            <p class="miMensaje"><%=data[i].texto %></p>
+                        </li>
+                    <%}else{%>
+                        <li class="d-flex justify-content-start"> 
+                            <p class="suMensaje"><%=data[i].texto %></p>
+                        </li>
+                    <%}%>
+                <%}%>
+            </ul>
+            <div class="row mb-2 justify-content-center">
+                <div class="col-9 ms-2"> 
+                    <input type="input" class="form-control" id="texto">
+                </div>
+                <div class="col-2"> 
+                    <button type="button" id="enviar" class="btn btn-dark btn-block w-100">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('./footer'); %>
+</body>
+<script src="/javascripts/header.js"></script>
+</html>
