@@ -25,9 +25,6 @@ $(function(){
     })
 
     function MostrarPerfiles() {
-        // Calcular el índice inicial y final de los perfiles que se mostrarán en la página actual
-        var indiceInicial = (paginaActual - 1) * perfilesPorPagina;
-        var indiceFinal = Math.min(indiceInicial + perfilesPorPagina - 1, PerfilesTotales - 1); // no pasar el último perfil
         // Mostrar los perfiles correspondientes en la página actual
         $('#contenedor').empty();//elimino los perfiles 
         var contenedor= ``

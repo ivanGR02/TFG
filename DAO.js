@@ -342,12 +342,21 @@ class DAO {
             } else {
                 const sql = `INSERT INTO chats(id_usuario,id_trabajador) VALUES(?,?)`; 
                 connection.query(sql, [id_usuario,id_trabajador], function (err,datos) {
-                    connection.release();
                     if (err) {
                         callback(err,null);
                     } else {
-                        const nuevoId = datos.insertId;
-                        callback(null,nuevoId);
+                        const data ={}; 
+                        data.idChat=datos.insertId
+                        const sql2 = `SELECT * FROM usuarios WHERE id =?`; 
+                        connection.query(sql2, [id_trabajador], function (err,datos) {
+                            connection.release();
+                            if (err) {
+                                callback(err,null);
+                            } else {
+                                data.nombre = datos[0].nombre;
+                                callback(null,data);
+                            }
+                        });
                     }
                 });
             }

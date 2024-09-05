@@ -209,7 +209,8 @@ router.post('/crearChat',function(request,response){
       response.render("error",{codigo:"500",mensaje:"Error del servidor"});
     } else {
       var chat={};
-      chat.id_chat=data;
+      chat.id_chat=data.idChat;
+      chat.nombre=data.nombre;
       chat.id_user=request.session.id_user;
       chat.id_receptor=request.body.id;
       response.render('chat', { data: chat });

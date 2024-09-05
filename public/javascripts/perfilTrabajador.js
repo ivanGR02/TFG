@@ -10,7 +10,7 @@ $(function(){
     $("#Chat").on('click', function(event){
         event.preventDefault();
         var inicioSesion =$("#session").attr("data-session");
-        if(inicioSesion){
+        if(inicioSesion!=="false"){
             $("#abrirChat").submit();
         }else{
             mostrarAlertaInicioSesion("Tienes que iniciar sesion para poder abrir un chat");
