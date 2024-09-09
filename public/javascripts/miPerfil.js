@@ -28,7 +28,7 @@ $(function(){
                     $('#caruselFotos').hide();
                     $("#boton-borrar").hide();
                 }
-                
+                $("#modalConfirmar").modal('hide');
                 $('.carousel-indicators').find('button').eq(0).addClass('active'); // Marcar el nuevo indicador como activo
           
             },

@@ -60,6 +60,7 @@
             <div class="col-12 mx-auto text-center">
                 <form id="abrirChat"  action="/usuarios/crearChat" method="POST">
                     <input type="hidden" name="id" value="<%= trabajador.id %>">
+                    <input type="hidden" name="nombre" value="<%= trabajador.nombre %>">
                     <button id="Chat" class="btn btn-primary w-25">Abrir Chat</button>
                 </form>
             </div>

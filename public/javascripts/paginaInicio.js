@@ -1,8 +1,8 @@
 
 $(function(){
-    $("#contenedor .link").on('click', function () {//al dar a una tarjeta 
+    $(document).on('click', '#contenedor .row .link', function() {
         var formId = $(this).data('id');
-        $('#form' + formId).submit();
+         $('#form' + formId).submit();
     });
     var trabajadores ={}// los perfiles vistos
 

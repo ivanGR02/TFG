@@ -203,19 +203,73 @@ router.get('/misMensajes',function(request,response){
 })
 router.post('/crearChat',function(request,response){
   const dao = request.dao;
-  dao.crearChat(request.session.id_user,request.body.id, function(err, data) {
-    if (err) {
+  dao.getChat(request.session.id_user,request.body.id,function(err,chat){
+    if(err){
       response.status(500);
       response.render("error",{codigo:"500",mensaje:"Error del servidor"});
-    } else {
-      var chat={};
-      chat.id_chat=data.idChat;
-      chat.nombre=data.nombre;
-      chat.id_user=request.session.id_user;
-      chat.id_receptor=request.body.id;
-      response.render('chat', { data: chat });
+    }else if(!chat[0].id){// no existe ese chat, por lo que se crea
+      dao.crearChat(request.session.id_user,request.body.id, function(err, data) {
+        if (err) {
+          response.status(500);
+          response.render("error",{codigo:"500",mensaje:"Error del servidor"});
+        } else {
+          var chat={};
+          chat.id_chat=data.idChat;
+          chat.nombre=data.nombre;
+          chat.id_user=request.session.id_user;
+          chat.id_receptor=request.body.id;
+          response.render('chat', { data: chat });
+        }
+      });
+    }else{// existe el chat por lo que no se crea
+      const idusu_ultimoMensaje = parseInt(chat[0].id_usuario_ultimo_mensaje)
+      const mensajesNoVistos = parseInt(chat[0].mensajes_no_vistos)
+      if(idusu_ultimoMensaje!==request.session.id_user
+        && mensajesNoVistos!==0){
+          dao.mensajeVisto(chat[0].id, function(err,mensajesVistos){
+            if(err){
+              response.status(500);
+              response.render("error",{codigo:"500",mensaje:"Error del servidor"});
+            }else{
+              dao.updateMensajePerfil(request.session.id_user,-mensajesVistos,function(err){
+                  if(err){
+                    response.status(500);
+                    response.render("error",{codigo:"500",mensaje:"Error del servidor"});
+                  }
+                  else{
+                    request.session.mensaje= request.session.mensaje-mensajesVistos;
+                    response.locals.session.mensaje=request.session.mensaje;
+                    dao.getMensajes(chat[0].id, function(err, data) {
+                      if (err) {
+                        response.status(500);
+                        response.render("error",{codigo:"500",mensaje:"Error del servidor"});
+                      } else {
+                        data.id_chat=chat[0].id;
+                        data.id_receptor=chat[0].id_trabajador;
+                        data.nombre=request.body.nombre;
+                        response.render('chat', { data: data });
+                      }
+                    });
+                  }
+                })
+              } 
+          })
+      }else{
+        dao.getMensajes(chat[0].id, function(err, data) {
+          if (err) {
+            response.status(500);
+            response.render("error",{codigo:"500",mensaje:"Error del servidor"});
+          } else {
+            data.id_chat=chat[0].id;
+            data.id_receptor=chat[0].id_trabajador;
+            data.nombre=request.body.nombre;
+            response.render('chat', { data: data });
+          }
+        });
+      }
     }
-  });
+  })
+  
 })
 
 router.get('/chat', function(request, response) {

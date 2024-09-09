@@ -132,15 +132,19 @@ $(function(){
                 var semana=0;
                 var fila =$("<div class='row'><div class='d-flex flex-row justify-content-evenly semana'></div></div>")
                 const firstDayOfMonth = new Date(yearNumber, monthNumber, 1);
-                const startDayOfWeek = firstDayOfMonth.getDay();
+                let startDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; // Ajustar para que lunes sea 0 y domingo sea 6
                 const lastDayOfMonth = new Date(yearNumber, monthNumber+1, 0);
-                const endDayOfWeek = lastDayOfMonth.getDay();
-                var inicioCalendario = new Date(yearNumber, monthNumber, 1-startDayOfWeek);
-                var finCalendario = new Date(yearNumber, monthNumber+1, 8-endDayOfWeek);
-                let fechasIntermedias = [];// poner todas las fechas del calendario para compararlo con las fechas de los eventos
+                let endDayOfWeek = (lastDayOfMonth.getDay() + 6) % 7; // Ajustar para que lunes sea 0 y domingo sea 6
+
+                var inicioCalendario = new Date(yearNumber, monthNumber,- startDayOfWeek);
+                var finCalendario = new Date(yearNumber, monthNumber + 1, 7 - endDayOfWeek); // Aquí puedes cambiarlo si prefieres que sea 8
+
+                let fechasIntermedias = []; // Array para guardar todas las fechas del calendario
+
                 for (let fecha = moment(inicioCalendario); fecha <= moment(finCalendario); fecha.add(1, 'days')) {
                     fechasIntermedias.push(fecha.format('YYYY-MM-DD'));
                 }
+
                 var j=1;//para coger las fechas intermedias
                 var k=0;// para coger las reservas del data
                 var l=0;//mirar cuantos dias dura la reserva larga seleccionada
@@ -174,7 +178,7 @@ $(function(){
                                 }
                                dia =` 
                                 <div class="datereservaLarga calendar__date calendar__item calendar__last-days border border-dark border-3 w-100 py-4" data-dia="${yearNumber}-${(monthNumber ).toString().padStart(2, '0')}-${(getDiasTotales(monthNumber-1)-(i-1)).toString().padStart(2, '0')}"
-                                 style="background-color: ${data[k].color};  color: ${colorFondo};" data-reserva=" ${data[k].id_reserva}"">
+                                 style="background-color: ${data[k].color};  color: ${colorFondo};" data-reserva=" ${data[k].id_reserva}">
                                     ${getDiasTotales(monthNumber-1)-(i-1)}
                                     <br>Reserva: ${data[k].nombre}
                                 </div>`
@@ -232,7 +236,7 @@ $(function(){
                         }
                         dia =` 
                         <div class="datereservaLarga calendar__item border border-3 w-100 py-4 ${hoy}" data-dia="${yearNumber}-${(monthNumber+1).toString().padStart(2, '0')}-${(i).toString().padStart(2, '0')}"
-                         style="background-color: ${data[k].color}; color: ${colorFondo};" data-reserva=" ${data[k].id_reserva}"">
+                         style="background-color: ${data[k].color}; color: ${colorFondo};" data-reserva=" ${data[k].id_reserva}">
                             ${i}
                             <br>Reserva: ${data[k].nombre}
                         </div>`
@@ -249,7 +253,7 @@ $(function(){
                                 }
                                dia =` 
                                 <div class="datereservaLarga calendar__item border border-3 w-100 py-4 ${hoy}" data-dia="${yearNumber}-${(monthNumber+1).toString().padStart(2, '0')}-${(i).toString().padStart(2, '0')}" 
-                                style="background-color: ${data[k].color}; color: ${colorFondo};"data-reserva=" ${data[k].id_reserva}"">
+                                style="background-color: ${data[k].color}; color: ${colorFondo};"data-reserva=" ${data[k].id_reserva}">
                                     ${i}
                                     <br>Reserva: ${data[k].nombre}
                                 </div>`
@@ -295,7 +299,7 @@ $(function(){
                         }
                         dia =` 
                         <div class="datereservaLarga calendar__date calendar__item calendar__last-days border border-dark border-3 w-100 py-4" data-dia="${yearNumber}-${(monthNumber + 2).toString().padStart(2, '0')}-${(i+1).toString().padStart(2, '0')}" 
-                        style="background-color: ${data[k].color}; color: ${colorFondo};" data-reserva=" ${data[k].id_reserva}"">
+                        style="background-color: ${data[k].color}; color: ${colorFondo};" data-reserva=" ${data[k].id_reserva}">
                             ${i+1}
                             <br>Reserva: ${data[k].nombre}
                         </div>`
@@ -312,7 +316,7 @@ $(function(){
                                 }
                                dia =` 
                                 <div class="datereservaLarga calendar__date calendar__item calendar__last-days border border-dark border-3 w-100 py-4" data-dia="${yearNumber}-${(monthNumber + 2).toString().padStart(2, '0')}-${(i+1).toString().padStart(2, '0')}" 
-                                style="background-color: ${data[k].color}; color: ${colorFondo};"data-reserva=" ${data[k].id_reserva}"">
+                                style="background-color: ${data[k].color}; color: ${colorFondo};"data-reserva=" ${data[k].id_reserva}">
                                     ${i+1}
                                     <br>Reserva: ${data[k].nombre}
                                 </div>`
@@ -414,18 +418,18 @@ $(function(){
     }
     
     const esBisiesto = () => {
-        return ((currentYear % 100 !==0) && (currentYear % 4 === 0) || (currentYear % 400 === 0));
+        return ((yearNumber % 100 !==0) && (yearNumber % 4 === 0) || (yearNumber % 400 === 0));
     }
     
     const InicioMes = () => {
-        let start = new Date(currentYear, monthNumber, 1);
+        let start = new Date(yearNumber, monthNumber, 1);
         return ((start.getDay()-1) === -1) ? 6 : start.getDay()-1;
     }
     
     const nuevaFecha = () => {
-        currentDate.setFullYear(currentYear,monthNumber,currentDay);
+        currentDate.setFullYear(yearNumber,monthNumber,currentDay);
         $('#month').text(monthNames[monthNumber]+" ");
-        $('#year').text(" "+currentYear.toString());
+        $('#year').text(" "+yearNumber.toString());
         $('#dates').text('');
         EscribeMes(monthNumber);
     }

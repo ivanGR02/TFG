@@ -51,7 +51,6 @@ app.use((request, response, next) => {
     response.locals.session.id_user=request.session.id_user;
     response.locals.session.correo=request.session.correo;
     response.locals.session.nombre=request.session.nombre;
-    response.locals.session.trabajador=request.session.trabajador;
     dao.getMensajesNoVistoyFoto(request.session.id_user,function(err,numMensajes){
       if(err){
         next();
@@ -60,6 +59,13 @@ app.use((request, response, next) => {
         request.session.mensaje=numMensajes[0].mensaje_no_visto;
         response.locals.session.foto=numMensajes[0].foto_perfil;
         request.session.foto=numMensajes[0].foto_perfil;;
+        if(numMensajes[0].profesion){
+          response.locals.session.trabajador=true;
+          request.session.trabajador=true;
+        }else{
+          response.locals.session.trabajador=false
+          request.session.trabajador=false;
+        }
         next();
       }  
     })

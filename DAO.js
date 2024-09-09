@@ -362,6 +362,23 @@ class DAO {
             }
         });
     }
+    getChat(id_usuario,id_trabajador,callback){
+        this.pool.getConnection(function (err, connection) {
+            if (err) {
+                callback(err,null);
+            } else {
+                const sql = `SELECT * FROM chats where id_usuario =? AND id_trabajador =?`; 
+                connection.query(sql, [id_usuario,id_trabajador], function (err,datos) {
+                    connection.release();
+                    if (err) {
+                        callback(err,null);
+                    } else {
+                        callback(null,datos);
+                    }
+                });
+            }
+        });
+    }
     addMensaje(id_chat,id_usuario,texto,callback){
         this.pool.getConnection(function (err, connection) {
             if (err) {
@@ -756,9 +773,10 @@ class DAO {
                 callback(err,null);
             } else {
                 const sql = `
-                SELECT mensaje_no_visto, foto_perfil
-                FROM usuarios
-                WHERE id = ?;
+                 SELECT u.mensaje_no_visto, u.foto_perfil, t.profesion
+                FROM usuarios u
+                LEFT JOIN trabajadores t ON u.id = t.id_usuario
+                WHERE u.id = ?;
                 `;
                 connection.query(sql, [id_user], function(err,datos) {
                     connection.release();
