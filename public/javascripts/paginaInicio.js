@@ -7,7 +7,7 @@ $(function(){
     var trabajadores ={}// los perfiles vistos
 
     $("#busqueda").on('click', function(){
-        var trabajo = $("#profesion").val();
+        var trabajo = $("#profesionBus").val();
         var ubi = $("#Ubicacion").val();
         $.ajax({
             url: '/busqueda',

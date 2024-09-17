@@ -204,10 +204,11 @@ router.get('/misMensajes',function(request,response){
 router.post('/crearChat',function(request,response){
   const dao = request.dao;
   dao.getChat(request.session.id_user,request.body.id,function(err,chat){
+    console.log(chat);
     if(err){
       response.status(500);
       response.render("error",{codigo:"500",mensaje:"Error del servidor"});
-    }else if(!chat[0].id){// no existe ese chat, por lo que se crea
+    }else if(chat.length === 0){// no existe ese chat, por lo que se crea
       dao.crearChat(request.session.id_user,request.body.id, function(err, data) {
         if (err) {
           response.status(500);
